@@ -1019,7 +1019,7 @@ export default class Clerk implements ClerkInterface {
 
   #clearJustSynced = () => removeClerkQueryParam(CLERK_SYNCED);
 
-  #buildPrimarySyncUrl = (): string => {
+  #buildPrimarySyncUrlProd = (): string => {
     let primarySyncUrl;
 
     if (this.proxyUrl) {
@@ -1036,8 +1036,12 @@ export default class Clerk implements ClerkInterface {
     return primarySyncUrl?.toString() || '';
   };
 
-  #shouldSyncWithPrimary = (): boolean => {
+  #shouldSyncWithPrimaryProd = (): boolean => {
     if (!this.isSatellite) {
+      return false;
+    }
+
+    if (this.#instanceType !== 'production') {
       return false;
     }
 
@@ -1045,8 +1049,28 @@ export default class Clerk implements ClerkInterface {
     return cookieHandler.getClientUatCookie() <= 0;
   };
 
+  #shouldSyncWithPrimary = (): boolean => {
+    if (this.#hasJustSynced()) {
+      this.#clearJustSynced();
+      return false;
+    }
+    return (
+      this.#shouldSyncWithPrimaryDev() || this.#shouldSyncWithPrimaryProd() || this.#shouldRedirectToSatelliteDev()
+    );
+  };
+
+  #syncWithPrimaryProd = async () => {
+    await this.navigate(this.#buildPrimarySyncUrlProd());
+  };
+
   #syncWithPrimary = async () => {
-    await this.navigate(this.#buildPrimarySyncUrl());
+    if (this.#shouldSyncWithPrimaryDev()) {
+      await this.#syncWithPrimaryDev();
+    } else if (this.#shouldRedirectToSatelliteDev()) {
+      await this.redirectToSatellite();
+    } else if (this.#shouldSyncWithPrimaryProd()) {
+      await this.#syncWithPrimaryProd();
+    }
   };
 
   #shouldSyncWithPrimaryDev = (): boolean => {
@@ -1084,15 +1108,7 @@ export default class Clerk implements ClerkInterface {
       fapiClient: this.#fapiClient,
     });
 
-    if (this.#hasJustSynced()) {
-      this.#clearJustSynced();
-    } else if (this.#shouldSyncWithPrimaryDev()) {
-      await this.#syncWithPrimaryDev();
-      return false;
-    } else if (this.#shouldRedirectToSatelliteDev()) {
-      await this.redirectToSatellite();
-      return false;
-    } else if (this.#shouldSyncWithPrimary()) {
+    if (this.#shouldSyncWithPrimary()) {
       await this.#syncWithPrimary();
       // ClerkJS is not considered loaded during the sync/link process with the primary domain
       return false;
