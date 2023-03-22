@@ -51,6 +51,7 @@ import type {
 } from '@clerk/types';
 
 import type { MountComponentRenderer } from '../ui/Components';
+import type { CountryIso } from '../ui/elements/PhoneInput/countryCodeData';
 import {
   appendAsQueryParams,
   buildURL,
@@ -128,6 +129,7 @@ export default class Clerk implements ClerkInterface {
   public session?: ActiveSessionResource | null;
   public organization?: OrganizationResource | null;
   public user?: UserResource | null;
+  public country?: CountryIso | null;
   public readonly frontendApi: string;
   public readonly publishableKey?: string;
   public readonly proxyUrl?: ClerkInterface['proxyUrl'];
@@ -970,6 +972,12 @@ export default class Clerk implements ClerkInterface {
     this.#environment = environment;
     this.#authService?.setEnvironment(environment);
   }
+
+  setCountry = (country: CountryIso | null) => {
+    if (!this.country) {
+      this.country = country;
+    }
+  };
 
   updateClient = (newClient: ClientResource): void => {
     if (!this.client) {

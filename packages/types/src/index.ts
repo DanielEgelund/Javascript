@@ -5,6 +5,7 @@ export * from './authConfig';
 export * from './backupCode';
 export * from './clerk';
 export * from './client';
+export * from './countryIso';
 export * from './deletedObject';
 export * from './displayConfig';
 export * from './emailAddress';

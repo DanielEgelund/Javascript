@@ -9,6 +9,7 @@ import type {
   UserProfileTheme,
 } from './appearance';
 import type { ClientResource } from './client';
+import type { CountryIso } from './countryIso';
 import type { DisplayThemeJSON } from './json';
 import type { LocalizationResource } from './localization';
 import type { OAuthProvider, OAuthScope } from './oauth';
@@ -88,6 +89,11 @@ export interface Clerk {
 
   /** Current User. */
   user?: UserResource | null;
+
+  /** User country code */
+  country?: CountryIso | null;
+
+  setCountry: (country: CountryIso | null) => any;
 
   /**
    * Signs out the current user on single-session instances, or all users on multi-session instances

@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react';
 
-import { useEnvironment } from '../../contexts';
+import { getLongestValidCountryCode } from '../../../ui/utils/phoneUtils';
+import { useCoreClerk } from '../../contexts';
 import { Flex, Input, Text } from '../../customizables';
 import { Select, SelectButton, SelectOptionList } from '../../elements';
 import type { PropsOfComponent } from '../../styledSystem';
@@ -192,12 +193,12 @@ const Flag = (props: { iso: CountryIso }) => {
 };
 
 export const PhoneInput = (props: Omit<PhoneInputProps, 'dd'>) => {
-  const environment = useEnvironment();
+  const { country } = useCoreClerk();
 
   return (
     <PhoneInputBase
       {...props}
-      locationBasedCountryIso={environment.countryIso as CountryIso}
+      locationBasedCountryIso={country as CountryIso}
     />
   );
 };
