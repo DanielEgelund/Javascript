@@ -179,7 +179,12 @@ export interface UserJSON extends ClerkResourceJSON {
   external_accounts: ExternalAccountJSON[];
   organization_memberships: OrganizationMembershipJSON[];
   password_enabled: boolean;
+  /**
+   * @deprecated Instead use `new_password` along with `current_password`
+   */
   password: string;
+  current_password: string;
+  new_password: string;
   profile_image_id: string;
   first_name: string;
   last_name: string;
