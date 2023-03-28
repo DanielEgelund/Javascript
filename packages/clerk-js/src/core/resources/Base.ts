@@ -1,6 +1,7 @@
 import { isValidBrowserOnline } from '@clerk/shared';
 import type { ClerkAPIErrorJSON, ClerkResourceJSON, ClerkResourceReloadParams, DeletedObjectJSON } from '@clerk/types';
 
+import type { CountryIso } from '../../ui/elements/PhoneInput/countryCodeData';
 import { clerkMissingFapiClientInResources } from '../errors';
 import type { FapiClient, FapiRequestInit, FapiResponse, FapiResponseJSON, HTTPMethod } from '../fapiClient';
 import type { Clerk } from './internal';
@@ -46,6 +47,11 @@ export abstract class BaseResource {
     }
 
     const { payload, status, statusText } = fapiResponse;
+
+    if (payload?.meta) {
+      const country = payload?.meta.responseHeaders?.country || 'us';
+      this.clerk.__internal_setCountry((country ? country.toLowerCase() : null) as CountryIso | null);
+    }
 
     // TODO: Link to Client payload piggybacking design document
     if (requestInit.method !== 'GET' || opts.forceUpdateClient) {

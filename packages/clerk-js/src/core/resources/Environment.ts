@@ -7,7 +7,6 @@ import type {
   UserSettingsResource,
 } from '@clerk/types';
 
-import type { CountryIso } from '../../ui/elements/PhoneInput/countryCodeData';
 import { AuthConfig, BaseResource, DisplayConfig, UserSettings } from './internal';
 import { OrganizationSettings } from './OrganizationSettings';
 
@@ -58,9 +57,6 @@ export class Environment extends BaseResource implements EnvironmentResource {
 
   protected fromJSON(data: EnvironmentJSON | null): this {
     if (data) {
-      const country = data.meta?.responseHeaders?.country;
-      Environment.clerk.setCountry((country ? country.toLowerCase() : null) as CountryIso | null);
-
       this.authConfig = new AuthConfig(data.auth_config);
       this.displayConfig = new DisplayConfig(data.display_config);
       this.userSettings = new UserSettings(data.user_settings);

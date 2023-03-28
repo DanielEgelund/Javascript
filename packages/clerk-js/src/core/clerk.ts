@@ -973,7 +973,7 @@ export default class Clerk implements ClerkInterface {
     this.#authService?.setEnvironment(environment);
   }
 
-  setCountry = (country: CountryIso | null) => {
+  __internal_setCountry = (country: CountryIso | null) => {
     if (!this.country) {
       this.country = country;
     }

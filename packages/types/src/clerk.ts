@@ -93,8 +93,6 @@ export interface Clerk {
   /** User country code */
   country?: CountryIso | null;
 
-  setCountry: (country: CountryIso | null) => any;
-
   /**
    * Signs out the current user on single-session instances, or all users on multi-session instances
    * @param signOutCallback - Optional A callback that runs after sign out completes.
