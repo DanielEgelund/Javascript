@@ -18,8 +18,6 @@ import {
   SECRET_KEY,
   SIGN_IN_URL,
 } from './clerk';
-import { isDevOrStagingUrl } from './isDevOrStagingUrl';
-import { parsePublishableKey } from './parsePublishableKey';
 import type { WithAuthOptions } from './types';
 import {
   getCookie,
@@ -58,22 +56,6 @@ export const withClerkMiddleware: WithClerkMiddleware = (...args: unknown[]) => 
     const isSatellite = handleValueOrFn(opts.isSatellite, new URL(req.url), IS_SATELLITE);
     const domain = handleValueOrFn(opts.domain, new URL(req.url), DOMAIN);
     const signInUrl = opts?.signInUrl || SIGN_IN_URL;
-
-    if (isSatellite && !proxyUrl && !domain) {
-      throw new Error(`Missing domain and proxyUrl. A satellite application needs to specify a domain or a proxyUrl`);
-    }
-
-    if (
-      isSatellite &&
-      !signInUrl &&
-      isDevOrStagingUrl(parsePublishableKey(PUBLISHABLE_KEY)?.frontendApi || FRONTEND_API)
-    ) {
-      throw new Error(`Missing signInUrl. Pass a signInUrl for dev instances if an app is satellite`);
-    }
-
-    if (isSatellite && !proxyUrl && !domain) {
-      throw new Error(`Missing domain and proxyUrl. A satellite application needs to specify a domain or a proxyUrl`);
-    }
 
     // get auth state, check if we need to return an interstitial
     const cookieToken = getCookie(req, constants.Cookies.Session);
